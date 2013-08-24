@@ -22,8 +22,8 @@ namespace space
 
         Control control;
 
-        int screenWidth = 700;
-        int screenHeight = 700;
+        int screenWidth = 600;
+        int screenHeight = 600;
         Texture2D backgroundTexture;
         SpriteFont font;
 

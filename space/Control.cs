@@ -9,13 +9,19 @@ namespace space
 {
     class Control
     {
-        private List<Planet> planets;
-        private List<Ship> ships;
+        public List<Planet> planets;
+        public List<Ship> ships;
+        public List<AI> ais;
+
+
         public Texture2D shipTexture;
         public Texture2D planetTexture;
         public SpriteFont font;
+
         public int screenWidth;
         public int screenHeight;
+
+        public bool once = true;
 
         public Control(int screenWidth, int screenHeight)
         {
@@ -24,29 +30,69 @@ namespace space
 
             // initialize the game
             // create random planets and start the ai
-            // for now just a testPlanet planet and a testPlanet testShip
-
-            Planet testPlanet = new Planet();
-            testPlanet.playernumber = 2;
-            testPlanet.id = 1;
-            testPlanet.position = new Vector2(screenWidth/2, screenHeight/2);
-            testPlanet.radius = 50;
-            testPlanet.ships = 0;
 
             planets = new List<Planet>();
-            planets.Add(testPlanet);
+            Random r = new Random();
+            for (int i = 0; i < 5; i++) {
+                Planet testPlanet = new Planet();
+                testPlanet.playernumber = 1;
+                testPlanet.radius = r.Next(10,50);
+                testPlanet.ships = 5;
+                testPlanet.timer = 0;
 
-            Ship testShip = new Ship();
-            testShip.playernumber = 5;
-            testShip.position = new Vector2(300,0);
-            testShip.target = testPlanet;
+                Vector2 position = new Vector2(r.Next(testPlanet.radius, screenWidth / 2-testPlanet.radius), r.Next(testPlanet.radius, screenHeight-testPlanet.radius));
+                while(planets.Exists(p=>Vector2.Distance(p.position,position)<p.radius+testPlanet.radius))
+                {
+                    position = new Vector2(r.Next(testPlanet.radius, screenWidth / 2 - testPlanet.radius), r.Next(testPlanet.radius, screenHeight - testPlanet.radius));
+                }
+                testPlanet.position = position;
 
+                planets.Add(testPlanet);
+            }
+            r = new Random();
+            for (int i = 0; i < 5; i++)
+            {
+                Planet testPlanet = new Planet();
+                testPlanet.playernumber = 2;
+                testPlanet.radius = r.Next(10, 50);
+                testPlanet.ships = 5;
+                testPlanet.timer = 0;
+
+                Vector2 position = new Vector2(r.Next(screenWidth / 2 + testPlanet.radius, screenWidth - testPlanet.radius), r.Next(screenWidth / 2 + testPlanet.radius, screenHeight - testPlanet.radius));
+                while (planets.Exists(p => Vector2.Distance(p.position, position) < p.radius + testPlanet.radius))
+                {
+                    position = new Vector2(r.Next(screenWidth / 2 + testPlanet.radius, screenWidth - testPlanet.radius), r.Next(screenWidth / 2 + testPlanet.radius, screenHeight - testPlanet.radius));
+                }
+                testPlanet.position = position;
+                Console.Out.WriteLine(position);
+
+                planets.Add(testPlanet);
+            }
+
+
+            // create a few ships to test if they move correctly and are drawn.
             ships = new List<Ship>();
-            ships.Add(testShip);
+            for (int i = 0; i < 10; i++)
+            {
+                Ship testShip = new Ship();
+                testShip.playernumber = 1;
+                testShip.position = new Vector2(r.Next(0,screenWidth), r.Next(0,screenHeight/4));
+                testShip.target = planets.Last<Planet>();
+                ships.Add(testShip);
+            }
+
+            ais = new List<AI>();
+        }
+
+
+        public bool Send(Ship ship, Planet target) 
+        {
+            ship.target = target;
+            return true;
         }
 
         // method that an AI can call. Returns true if successful,
-        public bool Send(Planet from, Planet to, int amount, int playernumber)
+        public bool Send(Planet from, Planet to, int amount)
         {
 
             if (from.ships < amount)
@@ -55,11 +101,13 @@ namespace space
             }
 
             // create the ships
+            Random r = new Random();
+            from.ships = from.ships - amount;
             for (int i = 0; i < amount; i++)
             {
                 Ship ship = new Ship();
-                ship.position = from.position;
-                ship.playernumber = playernumber;
+                ship.position = from.position+new Vector2(r.Next(-20,20),r.Next(-20,20));
+                ship.playernumber = from.playernumber;
                 ship.target = to;
 
                 ships.Add(ship);
@@ -97,6 +145,23 @@ namespace space
 
         public void Update(GameTime gameTime) 
         {
+            // update the planets
+            foreach (Planet planet in planets) 
+            {
+                planet.timer += gameTime.ElapsedGameTime.Milliseconds;
+                if (planet.timer > 1000) {
+                    planet.timer = 0;
+                    planet.ships++;
+                }
+            }
+
+            // start the AI
+            foreach (AI ai in ais) 
+            {
+                ai.Update(this);
+            }
+
+            // move the ships
             List<Ship> landedShips=new List<Ship>();
             foreach(Ship ship in ships)
             {
@@ -116,11 +181,11 @@ namespace space
                         if (Vector2.Distance(ship.position, ship.target.position) > ship.target.radius)
                         {
                             float dot = Vector2.Dot(Vector2.UnitX, diff);
-                            Console.Out.WriteLine(dot);
-                            Console.Out.WriteLine(diff.Length());
+                            //Console.Out.WriteLine(dot);
+                            //Console.Out.WriteLine(diff.Length());
                             double angle = Math.Acos(dot / diff.Length());
                             ship.rotation = angle;
-                            Console.Out.WriteLine(angle);
+                            //Console.Out.WriteLine(angle);
                         }
                     }
                     else {
@@ -130,6 +195,12 @@ namespace space
             }
             foreach(Ship ship in landedShips){
                 Land(ship.target,ship);
+            }
+
+            if (gameTime.TotalGameTime.Seconds > 5 && once) 
+            {
+                once = false;
+                Send(planets.First<Planet>(), planets.Last<Planet>(), 5);
             }
         }
 

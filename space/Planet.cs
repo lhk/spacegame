@@ -13,5 +13,6 @@ namespace space
         public int ships;
         public int id;
         public int playernumber;
+        public float timer;
     }
 }

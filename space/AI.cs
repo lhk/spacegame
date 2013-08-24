@@ -7,6 +7,6 @@ namespace space
 {
     interface AI
     {
-        void Update(Control control);
+        void Update(Control control, int playernumber);
     }
 }

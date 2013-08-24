@@ -13,6 +13,9 @@ namespace space
         public List<Ship> ships;
         public List<AI> ais;
 
+        public List<SendOrder> sendOrders;
+
+
 
         public Texture2D shipTexture;
         public Texture2D planetTexture;
@@ -27,6 +30,8 @@ namespace space
         {
             this.screenWidth = screenWidth;
             this.screenHeight = screenHeight;
+
+            sendOrders = new List<SendOrder>();
 
             // initialize the game
             // create random planets and start the ai
@@ -69,30 +74,30 @@ namespace space
                 planets.Add(testPlanet);
             }
 
-
-            // create a few ships to test if they move correctly and are drawn.
             ships = new List<Ship>();
-            for (int i = 0; i < 10; i++)
-            {
-                Ship testShip = new Ship();
-                testShip.playernumber = 1;
-                testShip.position = new Vector2(r.Next(0,screenWidth), r.Next(0,screenHeight/4));
-                testShip.target = planets.Last<Planet>();
-                ships.Add(testShip);
-            }
 
             ais = new List<AI>();
+            ExpandAI eai1 = new ExpandAI();
+            ExpandAI eai2 = new ExpandAI();
+            ais.Add(eai1);
+            ais.Add(eai2);
         }
 
 
-        public bool Send(Ship ship, Planet target) 
+        public bool Order(SendOrder order)
+        {
+            sendOrders.Add(order);
+            return true;
+        }
+
+        private bool Send(Ship ship, Planet target) 
         {
             ship.target = target;
             return true;
         }
 
         // method that an AI can call. Returns true if successful,
-        public bool Send(Planet from, Planet to, int amount)
+        private bool Send(Planet from, Planet to, int amount)
         {
 
             if (from.ships < amount)
@@ -112,6 +117,7 @@ namespace space
 
                 ships.Add(ship);
             }
+
             return true;
         }
 
@@ -156,10 +162,18 @@ namespace space
             }
 
             // start the AI
+            int i = 1;
             foreach (AI ai in ais) 
             {
-                ai.Update(this);
+                ai.Update(this, i);
+                i++;
             }
+
+            foreach (SendOrder order in sendOrders) 
+            {
+                Send(order.from, order.to, order.amount);
+            }
+            sendOrders.RemoveAll(p => true);
 
             // move the ships
             List<Ship> landedShips=new List<Ship>();
@@ -180,12 +194,10 @@ namespace space
                         //now rotate the testShip, unless it is very close to the target.
                         if (Vector2.Distance(ship.position, ship.target.position) > ship.target.radius)
                         {
-                            float dot = Vector2.Dot(Vector2.UnitX, diff);
-                            //Console.Out.WriteLine(dot);
-                            //Console.Out.WriteLine(diff.Length());
-                            double angle = Math.Acos(dot / diff.Length());
-                            ship.rotation = angle;
-                            //Console.Out.WriteLine(angle);
+
+                            Vector2 direction = ship.target.position - ship.position;
+                            ship.rotation = (float)Math.Atan2(direction.Y, direction.X);
+
                         }
                     }
                     else {

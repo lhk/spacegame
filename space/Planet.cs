@@ -11,7 +11,6 @@ namespace space
         public Vector2 position;
         public int radius;
         public int ships;
-        public int id;
         public int playernumber;
         public float timer;
     }

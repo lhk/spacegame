@@ -7,16 +7,19 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace space
 {
+    // Singleton Object that controls the ships and planets
     class Control
     {
         public List<Planet> planets;
         public List<Ship> ships;
         public List<AI> ais;
 
+        // these orders are messages between the AIs and the control singleton.
+        // A SendOrder specifies an origin planet, a destination planet and the number of ships
         public List<SendOrder> sendOrders;
 
 
-
+        // Monogame specific stuff for drawing
         public Texture2D shipTexture;
         public Texture2D planetTexture;
         public SpriteFont font;
@@ -24,7 +27,6 @@ namespace space
         public int screenWidth;
         public int screenHeight;
 
-        public bool once = true;
 
         public Control(int screenWidth, int screenHeight)
         {
@@ -77,8 +79,8 @@ namespace space
             ships = new List<Ship>();
 
             ais = new List<AI>();
-            ExpandAI eai1 = new ExpandAI();
-            ExpandAI eai2 = new ExpandAI();
+            SimpleAI eai1 = new SimpleAI();
+            SimpleAI eai2 = new SimpleAI();
             ais.Add(eai1);
             ais.Add(eai2);
         }
@@ -149,11 +151,14 @@ namespace space
             return true;
         }
 
+        // The Update method of the Game1 object is called 60 times a second. And it calls the update method on its control instance.
+        // This Update method actually updates the game state
         public void Update(GameTime gameTime) 
         {
             // update the planets
             foreach (Planet planet in planets) 
             {
+                // time to add a new ship ?
                 planet.timer += gameTime.ElapsedGameTime.Milliseconds;
                 if (planet.timer > 1000) {
                     planet.timer = 0;
@@ -161,7 +166,12 @@ namespace space
                 }
             }
 
-            // start the AI
+            // update the AIs
+            // some dirty trick here. The AIs get a reference to the control singleton and their playernumber as parameters to their update method. 
+            // The AIs shouldn't store any persistent record of the situation but just query the current state from the control reference
+            // and then determine their planets and ships with their playernumbers.
+            // The playernumber is the position in the list of AIs.
+            // If an AI is added or removed during runtime, this could mean that players are "swapped"
             int i = 1;
             foreach (AI ai in ais) 
             {
@@ -169,6 +179,8 @@ namespace space
                 i++;
             }
 
+            // the AIs have made their decisions and created the according sendorders.
+            // process them
             foreach (SendOrder order in sendOrders) 
             {
                 Send(order.from, order.to, order.amount);
@@ -176,43 +188,35 @@ namespace space
             sendOrders.RemoveAll(p => true);
 
             // move the ships
+            // if a ship touches its target planet, it can land. That means it is removed from the list of ships and the planet is updated
+            // but the list of ships must not be modified in the foreach loop or an exception occurs.
+            // therefore the landed ships are stored in a separate list and removed after the foreach loop finishes.
             List<Ship> landedShips=new List<Ship>();
             foreach(Ship ship in ships)
             {
                 if (ship.target != null)
                 {
+                    // is the ship touching the planet ?
                     if (Vector2.Distance(ship.position, ship.target.position) > ship.target.radius)
                     {
-
+                        // move the ship towards the target
                         Vector2 diff = ship.target.position - ship.position;
                         diff.Normalize();
                         diff = Vector2.Multiply(diff, ((float)gameTime.ElapsedGameTime.Milliseconds) / 10);
-                        //Console.Out.WriteLine(diff);
                         ship.position += diff;
-                        //Console.Out.WriteLine(testShip.position);
 
-                        //now rotate the testShip, unless it is very close to the target.
-                        if (Vector2.Distance(ship.position, ship.target.position) > ship.target.radius)
-                        {
-
-                            Vector2 direction = ship.target.position - ship.position;
-                            ship.rotation = (float)Math.Atan2(direction.Y, direction.X);
-
-                        }
+                        // rotate the ship to face its target
+                        Vector2 direction = ship.target.position - ship.position;
+                        ship.rotation = (float)Math.Atan2(direction.Y, direction.X);
                     }
                     else {
+                        // the ship is within the planets radius, it must land
                         landedShips.Add(ship);
                     }
                 }
             }
             foreach(Ship ship in landedShips){
                 Land(ship.target,ship);
-            }
-
-            if (gameTime.TotalGameTime.Seconds > 5 && once) 
-            {
-                once = false;
-                Send(planets.First<Planet>(), planets.Last<Planet>(), 5);
             }
         }
 

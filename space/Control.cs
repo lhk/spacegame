@@ -13,6 +13,7 @@ namespace space
         public List<Planet> planets;
         public List<Ship> ships;
         public List<AI> ais;
+        public List<Explosion> explosions;
 
         // these orders are messages between the AIs and the control singleton.
         // A SendOrder specifies an origin planet, a destination planet and the number of ships
@@ -22,6 +23,7 @@ namespace space
         // Monogame specific stuff for drawing
         public Texture2D shipTexture;
         public Texture2D planetTexture;
+        public Texture2D explosionTexture;
         public SpriteFont font;
 
         public int screenWidth;
@@ -40,7 +42,7 @@ namespace space
 
             planets = new List<Planet>();
             Random r = new Random();
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 10; i++) {
                 Planet testPlanet = new Planet();
                 testPlanet.playernumber = 1;
                 testPlanet.radius = r.Next(10,50);
@@ -57,7 +59,7 @@ namespace space
                 planets.Add(testPlanet);
             }
             r = new Random();
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < 10; i++)
             {
                 Planet testPlanet = new Planet();
                 testPlanet.playernumber = 2;
@@ -83,6 +85,8 @@ namespace space
             SimpleAI eai2 = new SimpleAI();
             ais.Add(eai1);
             ais.Add(eai2);
+
+            explosions = new List<Explosion>();
         }
 
 
@@ -140,6 +144,7 @@ namespace space
                     planet.playernumber = 0;
                 }
                 ships.Remove(ship);
+                explosions.Add(new Explosion(ship.position));
             }
             else if (planet.ships == 0) 
             {
@@ -218,6 +223,16 @@ namespace space
             foreach(Ship ship in landedShips){
                 Land(ship.target,ship);
             }
+
+            List<Explosion> expiredExplosions = new List<Explosion>();
+            foreach (Explosion explosion in explosions) 
+            {
+                if (explosion.expired) expiredExplosions.Add(explosion);
+            }
+            foreach (Explosion explosion in expiredExplosions) 
+            {
+                explosions.Remove(explosion);
+            }
         }
 
 
@@ -253,6 +268,10 @@ namespace space
                 }
                 Rectangle drawRect = new Rectangle((int)(ship.position.X - ship.size / 2), (int)(ship.position.Y - ship.size / 2), (int)ship.size, (int)ship.size);
                 spriteBatch.Draw(shipTexture, drawRect,null , color, (float)ship.rotation, new Vector2(ship.size / 2, ship.size / 2), SpriteEffects.None, 1);
+            }
+            foreach (Explosion explosion in explosions) 
+            {
+                spriteBatch.Draw(explosionTexture, new Rectangle((int)explosion.position.X-25, (int)explosion.position.Y-25, 50, 50), explosion.drawRect, Color.White);
             }
         }
     }

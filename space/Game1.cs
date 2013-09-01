@@ -66,6 +66,7 @@ namespace space
             backgroundTexture = Content.Load<Texture2D>("space.png");
             control.planetTexture = Content.Load<Texture2D>("moon.png");
             control.shipTexture = Content.Load<Texture2D>("rocket.png");
+            control.explosionTexture = Content.Load<Texture2D>("explosion.png");
 
             font = Content.Load<SpriteFont>("font");
             control.font = font;

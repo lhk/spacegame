@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
 using Microsoft.Xna.Framework.GamerServices;
+using Microsoft.Xna.Framework.Audio;
 #endregion
 
 namespace space
@@ -67,6 +68,8 @@ namespace space
             control.planetTexture = Content.Load<Texture2D>("moon.png");
             control.shipTexture = Content.Load<Texture2D>("rocket.png");
             control.explosionTexture = Content.Load<Texture2D>("explosion.png");
+
+            control.explosionSound = Content.Load<SoundEffect>("explosion.wav");
 
             font = Content.Load<SpriteFont>("font");
             control.font = font;

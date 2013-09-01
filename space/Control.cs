@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Audio;
 
 namespace space
 {
@@ -25,6 +26,8 @@ namespace space
         public Texture2D planetTexture;
         public Texture2D explosionTexture;
         public SpriteFont font;
+
+        public SoundEffect explosionSound;
 
         public int screenWidth;
         public int screenHeight;
@@ -145,6 +148,7 @@ namespace space
                 }
                 ships.Remove(ship);
                 explosions.Add(new Explosion(ship.position));
+                explosionSound.Play();
             }
             else if (planet.ships == 0) 
             {

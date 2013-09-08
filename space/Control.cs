@@ -84,10 +84,10 @@ namespace space
             ships = new List<Ship>();
 
             ais = new List<AI>();
-            SimpleAI eai1 = new SimpleAI();
-            SimpleAI eai2 = new SimpleAI();
-            ais.Add(eai1);
-            ais.Add(eai2);
+            SimpleAI ai1 = new SimpleAI();
+            ExpandAI ai2 = new ExpandAI();
+            ais.Add(ai1);
+            ais.Add(ai2);
 
             explosions = new List<Explosion>();
         }
@@ -148,7 +148,7 @@ namespace space
                 }
                 ships.Remove(ship);
                 explosions.Add(new Explosion(ship.position));
-                explosionSound.Play();
+                //explosionSound.Play();
             }
             else if (planet.ships == 0) 
             {

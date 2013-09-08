@@ -37,6 +37,7 @@
   <ItemGroup>
     <Compile Include="AI.cs" />
     <Compile Include="Control.cs" />
+    <Compile Include="ExpandAI.cs" />
     <Compile Include="Explosion.cs" />
     <Compile Include="SimpleAI.cs" />
     <Compile Include="Game1.cs" />

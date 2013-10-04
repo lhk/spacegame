@@ -84,8 +84,8 @@ namespace space
             ships = new List<Ship>();
 
             ais = new List<AI>();
-            SimpleAI ai1 = new SimpleAI();
-            ExpandAI ai2 = new ExpandAI();
+            JoinAI ai1 = new JoinAI();
+            JoinAI ai2 = new JoinAI();
             ais.Add(ai1);
             ais.Add(ai2);
 

@@ -39,6 +39,7 @@
     <Compile Include="Control.cs" />
     <Compile Include="ExpandAI.cs" />
     <Compile Include="Explosion.cs" />
+    <Compile Include="JoinAI.cs" />
     <Compile Include="SimpleAI.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Planet.cs" />

@@ -8,9 +8,9 @@ using Microsoft.Xna.Framework.Graphics;
 namespace space
 {
     // the simplest AI possible.
-    class ExpandAI : AI
+    class ExpandAI : BaseAI
     {
-        public void Update(Control control, int playernumber)
+        override public void Update(Control control, int playernumber)
         {
             IEnumerable<Planet> ownPlanets = from Planet p in control.planets where p.playernumber == playernumber select p;
             if (!ownPlanets.Any())
@@ -38,12 +38,6 @@ namespace space
                 control.Send(new SendOrder(p, target, number));
 
             }
-        }
-        public IEnumerable<Planet> closestEnemies(IEnumerable<Planet> planets,int playernumber){
-            IEnumerable<Planet> enemies = from Planet p in planets where p.playernumber != playernumber select p;
-            IEnumerable<Planet> allies=from Planet p in planets where p.playernumber==playernumber select p;
-            enemies = from Planet p in enemies orderby Vector2.Distance((allies.Aggregate((a,b)=>Vector2.Distance(a.position,p.position)<Vector2.Distance(b.position,p.position)?a:b)).position,p.position) select p;
-            return enemies;
         }
     }
 }

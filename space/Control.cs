@@ -9,8 +9,12 @@ using Microsoft.Xna.Framework.Audio;
 namespace space
 {
     // Singleton Object that controls the ships and planets
+	// all AIs communicate with this object
+	// all updates on the game state are done here
     class Control
     {
+
+
         public List<Planet> planets;
         public List<Ship> ships;
         public List<AI> ais;
@@ -32,6 +36,18 @@ namespace space
         public int screenWidth;
         public int screenHeight;
 
+		/// minimum and maximum size of planets, purely visual, no gameplay effect
+		public int minPlanetRadius=10;
+		public int maxPlanetRadius=30;
+
+		// number of planets per player
+		public int planetCount=20;
+
+		// number of initial ships per planet
+		public int startShips=5;
+
+		// number of milliseconds to produce a new ship
+		public int shipDelay=1000;
 
         public Control(int screenWidth, int screenHeight)
         {
@@ -44,11 +60,11 @@ namespace space
             // create random planets and start the ai
             planets = new List<Planet>();
             Random r = new Random();
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < planetCount; i++) {
                 Planet testPlanet = new Planet();
                 testPlanet.playernumber = 1;
-                testPlanet.radius = r.Next(10,50);
-                testPlanet.ships = 5;
+                testPlanet.radius = r.Next(minPlanetRadius,maxPlanetRadius);
+                testPlanet.ships = startShips;
                 testPlanet.timer = 0;
 
                 Vector2 position = new Vector2(r.Next(testPlanet.radius, screenWidth / 2-testPlanet.radius), r.Next(testPlanet.radius, screenHeight-testPlanet.radius));
@@ -62,12 +78,12 @@ namespace space
             }
 
             r = new Random();
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < planetCount; i++)
             {
                 Planet testPlanet = new Planet();
                 testPlanet.playernumber = 2;
-                testPlanet.radius = r.Next(10, 50);
-                testPlanet.ships = 5;
+                testPlanet.radius = r.Next(minPlanetRadius, maxPlanetRadius);
+                testPlanet.ships = startShips;
                 testPlanet.timer = 0;
 
                 Vector2 position = new Vector2(r.Next(screenWidth / 2 + testPlanet.radius, screenWidth - testPlanet.radius), r.Next(screenWidth / 2 + testPlanet.radius, screenHeight - testPlanet.radius));
@@ -171,7 +187,7 @@ namespace space
 					continue;
                 // time to add a new ship ?
                 planet.timer += gameTime.ElapsedGameTime.Milliseconds;
-                if (planet.timer > 1000) {
+                if (planet.timer > shipDelay) {
                     planet.timer = 0;
                     planet.ships++;
                 }

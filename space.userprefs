@@ -1,17 +1,19 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="space/ExpandAI.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="space/SimpleAI.cs">
     <Files>
-      <File FileName="space/Control.cs" Line="234" Column="33" />
+      <File FileName="space/Control.cs" Line="39" Column="6" />
       <File FileName="space/Game1.cs" Line="44" Column="28" />
       <File FileName="space/Planet.cs" Line="1" Column="1" />
       <File FileName="space/Ship.cs" Line="1" Column="1" />
-      <File FileName="space/SimpleAI.cs" Line="1" Column="1" />
+      <File FileName="space/SimpleAI.cs" Line="20" Column="24" />
       <File FileName="space/SendOrder.cs" Line="1" Column="1" />
       <File FileName="space/Program.cs" Line="1" Column="1" />
-      <File FileName="space/JoinAI.cs" Line="1" Column="1" />
-      <File FileName="space/ExpandAI.cs" Line="31" Column="4" />
-      <File FileName="space/Explosion.cs" Line="26" Column="50" />
+      <File FileName="space/JoinAI.cs" Line="13" Column="18" />
+      <File FileName="space/ExpandAI.cs" Line="15" Column="71" />
+      <File FileName="space/AI.cs" Line="8" Column="14" />
+      <File FileName="space/BaseAI.cs" Line="15" Column="98" />
+      <File FileName="space/Explosion.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

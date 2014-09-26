@@ -9,9 +9,9 @@ using Microsoft.Xna.Framework.Graphics;
 namespace space
 {
     // the simplest AI possible.
-    class SimpleAI : AI
+    class SimpleAI : BaseAI
     {
-        public void Update(Control control, int playernumber)
+        override public void Update(Control control, int playernumber)
         {
             IEnumerable<Planet> ownPlanets = from Planet p in control.planets where p.playernumber==playernumber select p;
             if (!ownPlanets.Any()) 
@@ -28,8 +28,6 @@ namespace space
 
             //just attack one of the enemies
             Planet target = enemyPlanets.First();
-            int ships = ownPlanets.Sum(p => p.ships);
-
 
             foreach (Planet p in ownPlanets) {
                 Console.Out.WriteLine(p.ships);

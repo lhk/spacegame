@@ -8,9 +8,9 @@ using Microsoft.Xna.Framework.Graphics;
 namespace space
 {
     // the simplest AI possible.
-    class JoinAI : AI
+    class JoinAI : BaseAI
     {
-        public void Update(Control control, int playernumber)
+        override public void Update(Control control, int playernumber)
         {
             IEnumerable<Planet> allies = from Planet p in control.planets where p.playernumber == playernumber select p;
             if (!allies.Any())
@@ -41,17 +41,6 @@ namespace space
                 control.Send(new SendOrder(p, target, number));
 
             }
-        }
-        public IEnumerable<Planet> closestEnemies(IEnumerable<Planet> enemies, IEnumerable<Planet> allies, int playernumber)
-        {
-            enemies = from Planet p in enemies orderby Vector2.Distance((allies.Aggregate((a, b) => Vector2.Distance(a.position, p.position) < Vector2.Distance(b.position, p.position) ? a : b)).position, p.position) select p;
-            return enemies;
-        }
-
-        public IEnumerable<Planet> closestAllies(IEnumerable<Planet> allies, Planet ally)
-        {
-            allies = from Planet p in allies orderby Vector2.Distance(p.position, ally.position) where p.position != ally.position select p;
-            return allies;
         }
     }
 }

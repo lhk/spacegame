@@ -42,7 +42,6 @@ namespace space
 
             // initialize the game
             // create random planets and start the ai
-
             planets = new List<Planet>();
             Random r = new Random();
             for (int i = 0; i < 10; i++) {
@@ -61,6 +60,7 @@ namespace space
 
                 planets.Add(testPlanet);
             }
+
             r = new Random();
             for (int i = 0; i < 10; i++)
             {
@@ -93,7 +93,7 @@ namespace space
         }
 
 
-        public bool Order(SendOrder order)
+        public bool Send(SendOrder order)
         {
             sendOrders.Add(order);
             return true;
@@ -167,6 +167,8 @@ namespace space
             // update the planets
             foreach (Planet planet in planets) 
             {
+				if (planet.playernumber == 0)
+					continue;
                 // time to add a new ship ?
                 planet.timer += gameTime.ElapsedGameTime.Milliseconds;
                 if (planet.timer > 1000) {
@@ -228,6 +230,11 @@ namespace space
                 Land(ship.target,ship);
             }
 
+			foreach (Explosion explosion in explosions) {
+				explosion.Update (gameTime);
+			}
+
+
             List<Explosion> expiredExplosions = new List<Explosion>();
             foreach (Explosion explosion in explosions) 
             {
@@ -275,6 +282,7 @@ namespace space
             }
             foreach (Explosion explosion in explosions) 
             {
+
                 spriteBatch.Draw(explosionTexture, new Rectangle((int)explosion.position.X-25, (int)explosion.position.Y-25, 50, 50), explosion.drawRect, Color.White);
             }
         }

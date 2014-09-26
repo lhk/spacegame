@@ -38,7 +38,7 @@ namespace space
                 //if (p.ships < target.ships) continue;
                 if (p.ships < 2) return;
                 int number = 1;
-                control.Order(new SendOrder(p, target, number));
+                control.Send(new SendOrder(p, target, number));
 
             }
         }

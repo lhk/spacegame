@@ -1,0 +1,21 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="space/ExpandAI.cs">
+    <Files>
+      <File FileName="space/Control.cs" Line="234" Column="33" />
+      <File FileName="space/Game1.cs" Line="44" Column="28" />
+      <File FileName="space/Planet.cs" Line="1" Column="1" />
+      <File FileName="space/Ship.cs" Line="1" Column="1" />
+      <File FileName="space/SimpleAI.cs" Line="1" Column="1" />
+      <File FileName="space/SendOrder.cs" Line="1" Column="1" />
+      <File FileName="space/Program.cs" Line="1" Column="1" />
+      <File FileName="space/JoinAI.cs" Line="1" Column="1" />
+      <File FileName="space/ExpandAI.cs" Line="31" Column="4" />
+      <File FileName="space/Explosion.cs" Line="26" Column="50" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

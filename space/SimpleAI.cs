@@ -11,7 +11,7 @@ namespace space
     // the simplest AI possible.
     class SimpleAI : BaseAI
     {
-        override public void Update(Control control, int playernumber)
+        override public void Update()
         {
             IEnumerable<Planet> ownPlanets = from Planet p in control.planets where p.playernumber==playernumber select p;
             if (!ownPlanets.Any()) 

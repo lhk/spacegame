@@ -10,7 +10,9 @@ namespace space
     // the simplest AI possible.
     class JoinAI : BaseAI
     {
-        override public void Update(Control control, int playernumber)
+		private Vector2 targetPosition=Vector2.Zero;
+
+        override public void Update()
         {
             IEnumerable<Planet> allies = from Planet p in control.planets where p.playernumber == playernumber select p;
             if (!allies.Any())
@@ -33,7 +35,7 @@ namespace space
                 ally.Add(p);
 
                 Planet target = closestEnemies(enemies, ally, playernumber).First();
-
+				targetPosition = target.position;
                 Console.Out.WriteLine(p.ships);
                 //if (p.ships < target.ships) continue;
                 if (p.ships < 2) return;
@@ -42,5 +44,10 @@ namespace space
 
             }
         }
+		override public void Draw(SpriteBatch spriteBatch){
+			if (font != null) {
+				spriteBatch.DrawString (font, "target", targetPosition, Color.Yellow);
+			}
+		}
     }
 }

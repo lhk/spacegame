@@ -8,9 +8,11 @@ using Microsoft.Xna.Framework.Audio;
 
 namespace space
 {
-    // Singleton Object that controls the ships and planets
-	// all AIs communicate with this object
-	// all updates on the game state are done here
+	/// <summary>
+	/// Singleton Object that controls the ships and planetsall 
+	/// AIs communicate with this object
+	/// all updates on the game state are done here
+	/// </summary>
     class Control
     {
 
@@ -29,10 +31,17 @@ namespace space
         public Texture2D shipTexture;
         public Texture2D planetTexture;
         public Texture2D explosionTexture;
-        public SpriteFont font;
-
+		private SpriteFont Font;
+		public SpriteFont font {
+			get{ return Font;}
+			set {
+				Font = value;
+				foreach (AI ai in ais) {
+					ai.font = Font;
+				}
+			}
+		}
         public SoundEffect explosionSound;
-
         public int screenWidth;
         public int screenHeight;
 
@@ -49,6 +58,11 @@ namespace space
 		// number of milliseconds to produce a new ship
 		public int shipDelay=1000;
 
+		/// <summary>
+		/// Creates a new control object and starts the game.
+		/// </summary>
+		/// <param name="screenWidth">Screen width.</param>
+		/// <param name="screenHeight">Screen height.</param>
         public Control(int screenWidth, int screenHeight)
         {
             this.screenWidth = screenWidth;
@@ -101,27 +115,43 @@ namespace space
 
             ais = new List<AI>();
             JoinAI ai1 = new JoinAI();
+			ai1.playernumber = 1;
+			ai1.control = this;
             JoinAI ai2 = new JoinAI();
+			ai2.playernumber = 2;
+			ai2.control = this;
             ais.Add(ai1);
             ais.Add(ai2);
 
             explosions = new List<Explosion>();
         }
 
-
+		/// <summary>
+		/// Send ships
+		/// </summary>
+		/// <param name="order">sendorder</param>
         public bool Send(SendOrder order)
         {
             sendOrders.Add(order);
             return true;
         }
-
+		/// <summary>
+		/// Send one specific ship, change its target
+		/// </summary>
+		/// <param name="ship">Ship.</param>
+		/// <param name="target">Target.</param>
         private bool Send(Ship ship, Planet target) 
         {
             ship.target = target;
             return true;
         }
 
-        // method that an AI can call. Returns true if successful,
+		/// <summary>
+		/// Send ships
+		/// </summary>
+		/// <param name="from">from where</param>
+		/// <param name="to">to where</param>
+		/// <param name="amount">how many</param>
         private bool Send(Planet from, Planet to, int amount)
         {
 
@@ -146,6 +176,11 @@ namespace space
             return true;
         }
 
+		/// <summary>
+		/// Land the ship on the planet.
+		/// </summary>
+		/// <param name="planet">Planet.</param>
+		/// <param name="ship">Ship.</param>
         public bool Land(Planet planet, Ship ship)
         {
             if (planet.playernumber == ship.playernumber) {
@@ -178,6 +213,10 @@ namespace space
 
         // The Update method of the Game1 object is called 60 times a second. And it calls the update method on its control instance.
         // This Update method actually updates the game state
+		/// <summary>
+		/// Update, called for every frame
+		/// </summary>
+		/// <param name="gameTime">Game time.</param>
         public void Update(GameTime gameTime) 
         {
             // update the planets
@@ -202,7 +241,7 @@ namespace space
             int i = 1;
             foreach (AI ai in ais) 
             {
-                ai.Update(this, i);
+                ai.Update();
                 i++;
             }
 
@@ -261,22 +300,41 @@ namespace space
                 explosions.Remove(explosion);
             }
         }
+		 
+		public Color playerColor(int playernumber){
+			Color color = Color.Khaki;
+			switch (playernumber) {
+			case 0:
+				color = Color.Gray;
+				break;
+			case 1:
+				color = Color.Red;
+				break;
+			case 2:
+				color = Color.Blue;
+				break;
+			case 3:
+				color = Color.Green;
+				break;
+			case 4:
+				color = Color.Gold;
+				break;
+			case 5:
+				color = Color.HotPink;
+				break;
+			}
+			return color;
+		}
 
-
+		/// <summary>
+		/// Draw call for every frame
+		/// </summary>
+		/// <param name="spriteBatch">Sprite batch.</param>
         public void Draw(SpriteBatch spriteBatch)
         {
             foreach (Planet planet in planets)
             {
-                Color color=Color.Khaki;
-                switch (planet.playernumber) 
-                {
-                    case 0: color = Color.Gray; break;
-                    case 1: color = Color.Red; break;
-                    case 2: color = Color.Blue; break;
-                    case 3: color = Color.Green; break;
-                    case 4: color = Color.Gold; break;
-                    case 5: color = Color.HotPink; break;
-                }
+				Color color = playerColor (planet.playernumber);
                 Rectangle drawRect = new Rectangle((int)planet.position.X - planet.radius, (int)planet.position.Y - planet.radius,(int) planet.radius*2,(int) planet.radius*2);
                 spriteBatch.Draw(planetTexture, drawRect, color);
                 spriteBatch.DrawString(font, ""+planet.ships, planet.position, color);
@@ -301,6 +359,9 @@ namespace space
 
                 spriteBatch.Draw(explosionTexture, new Rectangle((int)explosion.position.X-25, (int)explosion.position.Y-25, 50, 50), explosion.drawRect, Color.White);
             }
+			foreach (AI ai in ais) {
+				ai.Draw (spriteBatch);
+			}
         }
     }
 }

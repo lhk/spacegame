@@ -9,13 +9,28 @@ namespace space
 {
 	abstract class BaseAI: AI
 	{
-		virtual public void Update(Control control, int playernumber){
+		/// <summary>
+		/// For debug purposes. With this font, the AI can draw messages
+		/// </summary>
+		private SpriteFont Font;
+		public SpriteFont font{
+			get{return Font;}
+			set{Font=value;}
+		}
+		public int playernumber{ get; set;}
+		public Control control{ get; set; }
+
+		virtual public void Update(){
+		}
+		virtual public void Draw(SpriteBatch spriteBatch){
 		}
 
-		//TODO add caching, this is really tough on the cpu. nasty performance for more than 20 planets
-		// returns a list of enemy planets, ordered by the distance to the closest planet of the player
-		// planets : all planets
-		// playernumber : this players number
+		/// <summary>
+		/// Returns a list of all enemies sorted by ascending distance
+		/// </summary>
+		/// <returns>List of enemies</returns>
+		/// <param name="planets">All planets</param>
+		/// <param name="playernumber">Playernumber.</param>
 		public IEnumerable<Planet> closestEnemies(IEnumerable<Planet> planets,int playernumber){
 			IEnumerable<Planet> enemies = from Planet p in planets where p.playernumber != playernumber select p;
 			IEnumerable<Planet> allies=from Planet p in planets where p.playernumber==playernumber select p;
@@ -34,7 +49,13 @@ namespace space
 			return enemies;
 		}
 
-		// returns a list of enemy planets, ordered by the distance to the group of planets given
+		/// <summary>
+		/// Returns a list of enemies sorted by ascending distance to the given group of planets
+		/// </summary>
+		/// <returns>List of enemies</returns>
+		/// <param name="planets">All planets</param>
+		/// <param name="allies">allies</param>
+		/// <param name="playernumber">Playernumber.</param>
 		public IEnumerable<Planet> closestEnemies(IEnumerable<Planet> planets, IEnumerable<Planet> allies,int playernumber){
 			IEnumerable<Planet> enemies = from Planet p in planets where p.playernumber != playernumber select p;
 			foreach (Planet p in allies)
@@ -44,6 +65,12 @@ namespace space
 			return enemies;
 		}
 
+		/// <summary>
+		/// Returns a list of the allied planets, ordered by ascending distance to the specified ally
+		/// </summary>
+		/// <returns>List of allies</returns>
+		/// <param name="allies">Allies.</param>
+		/// <param name="ally">Ally.</param>
 		public IEnumerable<Planet> closestAllies(IEnumerable<Planet> allies, Planet ally)
 		{
 			allies = from Planet p in allies orderby Vector2.Distance(p.position, ally.position) where p.position != ally.position select p;
